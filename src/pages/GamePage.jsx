@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { Col, Row, Layout, Button, Space } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Content } = Layout;
 
 const GamePage = () => {
+    const navigate = useNavigate();
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const stripRef = useRef(null);
@@ -78,7 +80,14 @@ const GamePage = () => {
                                 className="player"
                                 style={{minWidth: 300, width: "100%", maxWidth: 500}}
                             />
-                            <Button onClick={() => takePhoto()}>Take a photo</Button>
+                            <Space>
+                                <Button onClick={() => takePhoto()}>Take a photo</Button>
+                                <Button onClick={() => {
+                                    navigate("/main", { state : {
+                                        photo: photoRef.current.toDataURL("image/jpeg")
+                                    }});
+                                }}>Next</Button>
+                            </Space>
                         </Space>
                     </Col>
                     <Col span={24}>
