@@ -13,12 +13,14 @@ function App() {
                 },
             }}
         >
-            <BrowserRouter>
-                <Switch>
-                    <Route path="/" element={<HomePage />}></Route>
-                    <Route path="/game" element={<GamePage />}></Route>
-                </Switch>
-            </BrowserRouter>
+            <div className='App'>
+                <BrowserRouter>
+                    <Switch>
+                        <Route path="/" element={<HomePage />}></Route>
+                        <Route path="/game" element={<GamePage />}></Route>
+                    </Switch>
+                </BrowserRouter>
+            </div>
         </ConfigProvider>
     );
 }

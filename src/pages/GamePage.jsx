@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from "react";
+import { Col, Row, Layout, Button, Space } from "antd";
 
-const App = () => {
+const { Content } = Layout;
+
+const GamePage = () => {
     const videoRef = useRef(null);
     const photoRef = useRef(null);
     const stripRef = useRef(null);
@@ -64,35 +67,32 @@ const App = () => {
     };
 
     return (
-        <div>
+        <Content>
             <div className="webcam-video">
-                <button onClick={() => takePhoto()}>Take a photo</button>
-                <video
-                    onCanPlay={() => paintToCanvas()}
-                    ref={videoRef}
-                    className="player"
-                    style={{minWidth: 300, width: "100%", maxWidth: 500}}
-                />
-                <canvas ref={photoRef} className="photo" />
-                <div className="photo-booth">
-                    <div ref={stripRef} className="strip" />
-                </div>
+                <Row justify="center">
+                    <Col span={24}>
+                        <Space direction="vertical">
+                            <video
+                                onCanPlay={() => paintToCanvas()}
+                                ref={videoRef}
+                                className="player"
+                                style={{minWidth: 300, width: "100%", maxWidth: 500}}
+                            />
+                            <Button onClick={() => takePhoto()}>Take a photo</Button>
+                        </Space>
+                    </Col>
+                    <Col span={24}>
+                        <Space>
+                            <canvas ref={photoRef} className="photo" />
+                            <div className="photo-booth">
+                                <div ref={stripRef} className="strip" />
+                            </div>
+                        </Space>
+                    </Col>
+                </Row>
             </div>
-        </div>
+        </Content>
     );
 };
 
-export default App;
-
-  
-
-// export default function GamePage() {
-
-//     return (
-//         <div>
-//             <header>
-//                 <Button type="primary">CLICK ME</Button>
-//             </header>
-//         </div>
-//     );
-// }
+export default GamePage;
