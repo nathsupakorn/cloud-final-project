@@ -154,7 +154,8 @@ const MainPage = () => {
                     top: 5,
                     fontSize: 50,
                     fill: 'green',
-                    textAlign: "center"
+                    textAlign: "center",
+                    fontFamily: 'Menlo'
                 }),
             ];
             fabricRef.current.add(...objects);
