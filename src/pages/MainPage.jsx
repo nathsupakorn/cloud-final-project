@@ -42,7 +42,7 @@ const MainPage = () => {
         const initFabric = () => {
             fabricRef.current = new fabric.Canvas(canvasRef.current);
             fabricRef.current.setHeight(500);
-            fabricRef.current.setWidth(window.innerWidth*0.9);
+            fabricRef.current.setWidth(0.94*window.innerWidth);
             fabricRef.current.on('mouse:down', (e) => {
                 console.log("Helloo", e);
                 targetObject.current = e.target;
@@ -145,7 +145,7 @@ const MainPage = () => {
     };
 
     const surprise = () => {
-        const calInnerWidth = 0.9*window.innerWidth;
+        const calInnerWidth = 0.94*window.innerWidth;
         // const numberFilter = Math.floor(Math.random() * 7) + 1
         fabricRef.current.clear();
         fabric.Image.fromURL(photo, (img) => {
@@ -187,123 +187,124 @@ const MainPage = () => {
 
 
     return (
-        <Layout.Content style={{margin: 0, padding: "5%"}}>
+        <Layout.Content style={{margin: 0, padding: "3%"}}>
             <div style={{margin: 0, padding: 0}}>
                 {contextHolder}
                 <Spin spinning={spin}>
                     <Row gutter={[16,16]}>
                         <Col span={24} style={{margin: 0, padding: 0}}>
-                            {photo && <img alt="imgSrc" id="imgSrc" src={photo}></img>}
-                        </Col>
-                        <Col span={24} style={{margin: 0, padding: 0}}>
                             <Card style={{boxShadow: "0px 0px 10px #EEEEEE", padding: "5", margin: "1% 5%"}}>
-                                <Space wrap style={{width: "100%", display: "flex", justifyContent: "center"}}>
-                                    <Button onClick={surprise}>&#x1F389; SURPRISE</Button>
-                                    <Button 
-                                        type="primary"
-                                        icon={<SmileFilled />}
-                                        onClick={() => {
-                                            fabric.Image.fromURL(photo, function(img) {
-                                                var oImg = img.set({ left: 0, top: 0}).scale(1);
-                                                fabricRef.current.add(oImg);
-                                            });
-                                        }} ></Button>
-                                    <Button 
-                                        type="primary"
-                                        icon={<FontSizeOutlined />}
-                                        onClick={() => {
-                                            const text = new fabric.Textbox("Hello", {width: "20"});
-                                            fabricRef.current.add(text);
-                                        // canvas.add(text);
-                                        }}></Button>
-                                    <Button 
-                                        type="primary"
-                                        icon={<Icon component={ () => (
-                                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <circle cx="7.5" cy="7.5" r="6.5" fill="white" />
-                                            </svg>
-                                        )
-                                        }></Icon>}
-                                        onClick={() => {
-                                            const circle = new fabric.Circle({
-                                                radius: 65,
-                                                fill: 'pink',
-                                                left: 0,
-                                            });
-                                            fabricRef.current.add(circle);
-                                        }}></Button>
+                                <Space wrap style={{display: "flex", justifyContent: "space-between", alignItems: "end"}}>
+                                    {photo && <img alt="imgSrc" id="imgSrc" src={photo} style={{borderRadius: "1em", maxWidth: 500}}></img>}
+                                    <Space wrap style={{display: "flex", justifyContent: "center", alignItems: "end"}}>
+                                        <Button onClick={surprise}>&#x1F389; SURPRISE</Button>
+                                        <Button 
+                                            type="primary"
+                                            icon={<SmileFilled />}
+                                            onClick={() => {
+                                                fabric.Image.fromURL(photo, function(img) {
+                                                    var oImg = img.set({ left: 0, top: 0}).scale(1);
+                                                    fabricRef.current.add(oImg);
+                                                });
+                                            }} ></Button>
+                                        <Button 
+                                            type="primary"
+                                            icon={<FontSizeOutlined />}
+                                            onClick={() => {
+                                                const text = new fabric.Textbox("Hello", {width: "20"});
+                                                fabricRef.current.add(text);
+                                                // canvas.add(text);
+                                            }}></Button>
+                                        <Button 
+                                            type="primary"
+                                            icon={<Icon component={ () => (
+                                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle cx="7.5" cy="7.5" r="6.5" fill="white" />
+                                                </svg>
+                                            )
+                                            }></Icon>}
+                                            onClick={() => {
+                                                const circle = new fabric.Circle({
+                                                    radius: 65,
+                                                    fill: 'pink',
+                                                    left: 0,
+                                                });
+                                                fabricRef.current.add(circle);
+                                            }}></Button>
 
-                                    <Button 
-                                        type="primary"
-                                        icon={<Icon component={ () => (
-                                            <svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" className="" viewBox="0 0 1024 1024"><path d="M864 64H160C107 64 64 107 64 160v704c0 53 43 96 96 96h704c53 0 96-43 96-96V160c0-53-43-96-96-96z"></path></svg>
-                                        )
-                                        }></Icon>}
-                                        onClick={() => {
-                                            const rect = new fabric.Rect({
-                                                width: 130,
-                                                height: 120,
-                                                fill: 'red',
-                                            });
-                                            fabricRef.current.add(rect);
-                                        }}></Button>
+                                        <Button 
+                                            type="primary"
+                                            icon={<Icon component={ () => (
+                                                <svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" className="" viewBox="0 0 1024 1024"><path d="M864 64H160C107 64 64 107 64 160v704c0 53 43 96 96 96h704c53 0 96-43 96-96V160c0-53-43-96-96-96z"></path></svg>
+                                            )
+                                            }></Icon>}
+                                            onClick={() => {
+                                                const rect = new fabric.Rect({
+                                                    width: 130,
+                                                    height: 120,
+                                                    fill: 'red',
+                                                });
+                                                fabricRef.current.add(rect);
+                                            }}></Button>
 
-                                    <Divider></Divider>
-                                    <Space wrap direction="vertical" style={{justifyContent: "end", display: "flex"}}>
-                                        {previewSticker && <img src={previewSticker} width={128} height={128}></img>}
-                                        {!previewSticker && 
-                                        <div style={{display: "flex", justifyContent: "center"}}>
-                                            <Empty style={{width: 128, height: 128}} description={"No preview sticker"} />
-                                        </div>
-                                        }
-                                        <Space wrap style={{justifyContent: "end", display: "flex"}}>
-                                            <Select
-                                                showSearch
-                                                style={{width: "100%", minWidth: 200}}
-                                                defaultValue={undefined}
-                                                onChange={(value) => {
-                                                    setPreviewSticker(value);
-                                                }}
-                                                filterOption={(input, option) =>
-                                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                                                }
-                                                options={LINKSTICKER}
-                                            ></Select>
-                                            <Button 
-                                                type="primary"
-                                                disabled={!previewSticker}
-                                                onClick={() => {
-                                                    fetch(previewSticker)
-                                                        .then(response => response.blob())
-                                                        .then(blob => {
-                                                            var reader = new FileReader();
-                                                            console.log(blob);
-                                                            reader.onloadend = function() {
+                                        <Divider></Divider>
+                                        <Space wrap size="large" direction="vertical" style={{justifyContent: "end", display: "flex"}}>
+                                            {previewSticker && <img src={previewSticker} width={128} height={128}></img>}
+                                            {!previewSticker && 
+                                                <div style={{display: "flex", justifyContent: "center"}}>
+                                                    <Empty style={{width: 128, height: 128}} description={"No preview sticker"} />
+                                                </div>
+                                            }
+                                            <Space wrap style={{justifyContent: "end", display: "flex"}}>
+                                                <Select
+                                                    showSearch
+                                                    style={{width: "100%", minWidth: 200}}
+                                                    defaultValue={undefined}
+                                                    onChange={(value) => {
+                                                        setPreviewSticker(value);
+                                                    }}
+                                                    filterOption={(input, option) =>
+                                                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                                    }
+                                                    options={LINKSTICKER}
+                                                ></Select>
+                                                <Button 
+                                                    type="primary"
+                                                    disabled={!previewSticker}
+                                                    onClick={() => {
+                                                        fetch(previewSticker)
+                                                            .then(response => response.blob())
+                                                            .then(blob => {
+                                                                var reader = new FileReader();
+                                                                console.log(blob);
+                                                                reader.onloadend = function() {
                                                                 // Retrieve the Base64-encoded data URL of the image
-                                                                var base64data = reader.result;
-                                                                console.log(base64data);
+                                                                    var base64data = reader.result;
+                                                                    console.log(base64data);
 
-                                                                // // Use the Base64-encoded data URL as needed (e.g. to create a Fabric.js Image object)
-                                                                fabric.Image.fromURL(base64data, function(img) {
-                                                                    var oImg = img.set({ left: 0, top: 0}).scale(0.5);
-                                                                    fabricRef.current.add(oImg);
-                                                                });
-                                                            };
-                                                            // Load the image data into the FileReader
-                                                            reader.readAsDataURL(blob);
-                                                        })
-                                                        .catch(error => {
+                                                                    // // Use the Base64-encoded data URL as needed (e.g. to create a Fabric.js Image object)
+                                                                    fabric.Image.fromURL(base64data, function(img) {
+                                                                        var oImg = img.set({ left: 0, top: 0}).scale(0.5);
+                                                                        fabricRef.current.add(oImg);
+                                                                    });
+                                                                };
+                                                                // Load the image data into the FileReader
+                                                                reader.readAsDataURL(blob);
+                                                            })
+                                                            .catch(error => {
                                                             // Handle any errors that occur during the fetch operation
-                                                            console.error('Error fetching image:', error);
-                                                            messageApi.error("Cannot load sticker");
-                                                        });
+                                                                console.error('Error fetching image:', error);
+                                                                messageApi.error("Cannot load sticker");
+                                                            });
 
-                                                }}
-                                            >Add sticker</Button>
+                                                    }}
+                                                >Add sticker</Button>
+                                            </Space>
                                         </Space>
-                                    </Space>
                                     
+                                    </Space>
                                 </Space>
+
                             </Card>
                         </Col>
                         <Col span={24} style={{margin: 0, padding: 0}}>
@@ -499,7 +500,7 @@ const MainPage = () => {
                                     icon={<SaveFilled />}
                                     onClick={ () => {
                                         let link = document.createElement('a');
-                                        link.download = 'JongTamTha.jpeg';
+                                        link.download = 'JongTamTha';
                                         link.href = document.getElementById('fabric-canvas').toDataURL();
                                         link.click();
                                     }}
