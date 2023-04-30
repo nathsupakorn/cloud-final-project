@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Col, Row, Layout, Button, Space, Typography } from "antd";
+import { Col, Row, Layout, Button, Space, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
     CameraOutlined,
     CameraFilled,
 } from '@ant-design/icons';
+import { getFacePredict, getRefImage } from "../api/apiService";
 
 const { Content } = Layout;
 
@@ -18,9 +19,17 @@ const GamePage = () => {
     const [photoHeight, setPhotoHeight] = useState(undefined);
     const [countDown, setCountDown] = useState(3);
     const [disabledButton, setDisabledButton] = useState(true);
+    const [messageApi, contextHolder] = message.useMessage();
+    const [refImage, setRefImage] = useState(undefined);
 
+    const getRefPhotoImage = async () => {
+        const response = await getRefImage();
+        console.log(response);
+        setRefImage(response);
+    };
     useEffect(() => {
         getVideo();
+        getRefPhotoImage();
     }, [videoRef]);
 
     const getVideo = () => {
@@ -82,6 +91,7 @@ const GamePage = () => {
 
     return (
         <Content style={{padding: "5%"}}>
+            {contextHolder}
             <div className="webcam-video">
                 <Row justify="center">
                     <Col span={24}>
@@ -106,11 +116,18 @@ const GamePage = () => {
                                         setDisabledButton(false);
                                         let myAudio = new Audio( require("../audios/mixkit-simple-game-countdown-921.wav"));
                                         myAudio.play();
-                                        setInterval(() => {setCountDown(countDown => countDown - 1);}, 1000);
-                                        return setTimeout(() => {
-                                            navigate("/main", { state : {
-                                                photo: photoRef.current.toDataURL("image/jpeg")
-                                            }});
+                                        setInterval(() => {
+                                            setCountDown(countDown => countDown - 1);
+                                        }, 1000);
+                                        return setTimeout(async () => {
+                                            try {
+                                                const photobase64 = photoRef.current.toDataURL("image/jpeg");
+                                                navigate("/main", { state : {
+                                                    photo: photobase64,
+                                                }});
+                                            } catch (error) {
+                                                messageApi.error(error.message);
+                                            }
                                         }, 3100);
                                     }}>Shoot</Button>}
                             </Space>

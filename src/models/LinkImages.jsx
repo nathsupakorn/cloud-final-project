@@ -307,4 +307,8 @@ const LINKSTICKER = [
     },
 ];
 
-export default LINKSTICKER;
+const ARRAYLINK = LINKSTICKER.reduce((accu, curr) => {
+    return accu.concat(curr.options.map((e) => e.value));
+}, []);
+
+export { LINKSTICKER, ARRAYLINK };

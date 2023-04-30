@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Spin, Button, Layout, Row, Col, Checkbox, Space, Select, message, Popconfirm, Divider, Card, Empty, Typography} from "antd";
 import { fabric } from 'fabric';
-import LINKSTICKER from "../models/LinkImages";
+import {LINKSTICKER, ARRAYLINK } from "../models/LinkImages";
+import { CAPTIONS, ARRAYWORD, NEUTRAL_WORDS } from "../models/WordList";
 import { ReactComponent as FlipIcon } from "../icons/teenyicons_flip-vertical-solid.svg";
 
 import Icon, {
@@ -13,14 +14,16 @@ import Icon, {
     ExperimentFilled,
     SaveFilled
 } from '@ant-design/icons';
+import { getFacePredict } from "../api/apiService";
 
-  
+
 const MainPage = () => {
     const [messageApi, contextHolder] = message.useMessage();
     const location = useLocation();
     const fabricRef = useRef(null);
     const canvasRef = useRef(null);
     const targetObject = useRef(null);
+    const [face, setFace] = useState(undefined);
     const [isClickPhoto, setIsClickPhoto] = useState(false);
     const [previewSticker, setPreviewSticker] = useState('');
     const [checkedGrayScale, setCheckedGrayScale] = useState(false);
@@ -38,13 +41,20 @@ const MainPage = () => {
     const [photo, setPhoto] = useState('');
     const [spin, setSpin] = useState(true);
 
+    const fetchFace = async (image) => {
+        const face = await getFacePredict(image.split(",")[1]);
+        console.log(face);
+        setFace(face);
+        return face;
+    };
+
     useEffect(() => {
+        setSpin(true);
         const initFabric = () => {
             fabricRef.current = new fabric.Canvas(canvasRef.current);
             fabricRef.current.setHeight(500);
             fabricRef.current.setWidth(0.94*window.innerWidth);
             fabricRef.current.on('mouse:down', (e) => {
-                console.log("Helloo", e);
                 targetObject.current = e.target;
                 if (targetObject.current !== null && targetObject.current.filters ) {
                     setIsClickPhoto(true);
@@ -70,18 +80,44 @@ const MainPage = () => {
         if (location.state === null || !(Object.keys(location.state).includes('photo'))) {
             navigate("/game");
         } else {
-            console.log(location.state.photo);
             const img = location.state.photo;
             if (img) {
                 setPhoto(img);
+                fetchFace(img);
                 setSpin(false);
             }
         }
-
+        setSpin(false);
         return () => {
             disposeFabric();
         };
-    }, [photo, fabric]);
+    }, []);
+
+    const fetchSticker = (previewSticker, position) => {
+        const {left, top, scale} = position;
+        fetch(previewSticker)
+            .then(response => response.blob())
+            .then(blob => {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    // Retrieve the Base64-encoded data URL of the image
+                    var base64data = reader.result;
+
+                    // // Use the Base64-encoded data URL as needed (e.g. to create a Fabric.js Image object)
+                    fabric.Image.fromURL(base64data, function(img) {
+                        var oImg = img.set({ left: left, top: top}).scale(scale);
+                        fabricRef.current.add(oImg);
+                    });
+                };
+                // Load the image data into the FileReader
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => {
+                // Handle any errors that occur during the fetch operation
+                console.error('Error fetching image:', error);
+                messageApi.error("Cannot load sticker");
+            });
+    };
 
     const applyFilter = (filter) => {
         var obj = fabricRef.current.getActiveObject();
@@ -90,7 +126,6 @@ const MainPage = () => {
                 obj.filters.push(filter);
                 obj.applyFilters();
                 fabricRef.current.renderAll();
-                console.log(obj);
             }
             catch (error) {
                 messageApi.warning("Cannot apply filters on Sticker");
@@ -144,45 +179,216 @@ const MainPage = () => {
         }
     };
 
+    const getRandomStickerLink = () => {
+        const arrayLink = ARRAYLINK;
+        const idxArray = parseInt(Math.random() * arrayLink.length);
+        return arrayLink[idxArray];
+    };
+
+    const addStickers = (type, position, imageSize) => {
+        const { width, height } = imageSize;
+        const {startX, startY, endX, endY} = position;
+        if (type === 1) {
+            if (Math.random() < 0.5) {
+                //left
+                const sticker = getRandomStickerLink();
+                const limitWidth = 0.1 * width;
+                const padRatio = 0.5;
+                const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + startX;
+                const top = (Math.random() * 500) - (scale*512*padRatio) + startY;
+                fetchSticker( sticker, {left, top, scale});
+            } else {
+                //right
+                const sticker = getRandomStickerLink();
+                const limitWidth = 0.1 * width;
+                const padRatio = 0.5;
+                const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + endX;
+                const top = (Math.random() * 500) - (scale*512*padRatio) + startY;
+                fetchSticker( sticker, {left, top, scale});
+            }
+        } else if (type === 2) {
+            //pass
+            const sticker1 = getRandomStickerLink();
+            const limitWidth1 = 0.1 * width;
+            const padRatio1 = 0.5;
+            const scale1 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left1 = (Math.random() * (limitWidth1*500/height)) - (scale1*512*padRatio1) + startX;
+            const top1 = (Math.random() * 500) - (scale1*512*padRatio1) + startY;
+            fetchSticker( sticker1, {left: left1, top: top1, scale: scale1});
+
+            const sticker = getRandomStickerLink();
+            const limitWidth = 0.1 * width;
+            const padRatio = 0.5;
+            const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + endX;
+            const top = (Math.random() * 500) - (scale*512*padRatio) + startY;
+            fetchSticker( sticker, {left, top, scale});
+        } else if (type === 3) {
+            if (Math.random() < 0.5) {
+                const sticker1 = getRandomStickerLink();
+                const limitWidth1 = 0.1 * width;
+                const padRatio1 = 0.5;
+                const scale1 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left1 = (Math.random() * (limitWidth1*500/height)) - (scale1*512*padRatio1) + startX;
+                const top1 = (Math.random() * 250) - (scale1*512*padRatio1) + startY;
+                fetchSticker( sticker1, {left: left1, top: top1, scale: scale1});
+
+                const sticker = getRandomStickerLink();
+                const limitWidth = 0.1 * width;
+                const padRatio = 0.5;
+                const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + startX;
+                const top = (Math.random() * 250) - (scale*512*padRatio) + startY + 250;
+                fetchSticker( sticker, {left, top, scale});
+    
+                const sticker2 = getRandomStickerLink();
+                const limitWidth2 = 0.1 * width;
+                const padRatio2 = 0.5;
+                const scale2 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left2 = (Math.random() * (limitWidth2*500/height)) - (scale2*512*padRatio2) + endX;
+                const top2 = (Math.random() * 500) - (scale2*512*padRatio2) + startY;
+                fetchSticker( sticker2, {left: left2, top: top2, scale: scale2});
+            } else {
+                const sticker1 = getRandomStickerLink();
+                const limitWidth1 = 0.1 * width;
+                const padRatio1 = 0.5;
+                const scale1 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left1 = (Math.random() * (limitWidth1*500/height)) - (scale1*512*padRatio1) + startX;
+                const top1 = (Math.random() * 500) - (scale1*512*padRatio1) + startY;
+                fetchSticker( sticker1, {left: left1, top: top1, scale: scale1});
+    
+                const sticker2 = getRandomStickerLink();
+                const limitWidth2 = 0.1 * width;
+                const padRatio2 = 0.5;
+                const scale2 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left2 = (Math.random() * (limitWidth2*500/height)) - (scale2*512*padRatio2) + endX;
+                const top2 = (Math.random() * 250) - (scale2*512*padRatio2) + startY;
+                fetchSticker( sticker2, {left: left2, top: top2, scale: scale2});
+
+                const sticker = getRandomStickerLink();
+                const limitWidth = 0.1 * width;
+                const padRatio = 0.5;
+                const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+                const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + endX;
+                const top = (Math.random() * 250) - (scale*512*padRatio) + startY + 250;
+                fetchSticker( sticker, {left, top, scale});
+            }
+        } else {
+            const sticker1 = getRandomStickerLink();
+            const limitWidth1 = 0.1 * width;
+            const padRatio1 = 0.5;
+            const scale1 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left1 = (Math.random() * (limitWidth1*500/height)) - (scale1*512*padRatio1) + startX;
+            const top1 = (Math.random() * 250) - (scale1*512*padRatio1) + startY;
+            fetchSticker( sticker1, {left: left1, top: top1, scale: scale1});
+
+            const sticker3 = getRandomStickerLink();
+            const limitWidth3 = 0.1 * width;
+            const padRatio3 = 0.5;
+            const scale3 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left3 = (Math.random() * (limitWidth3*500/height)) - (scale3*512*padRatio3) + startX;
+            const top3 = (Math.random() * 250) - (scale3*512*padRatio3) + startY + 250;
+            fetchSticker( sticker3, {left: left3, top: top3, scale: scale3});
+    
+            const sticker2 = getRandomStickerLink();
+            const limitWidth2 = 0.1 * width;
+            const padRatio2 = 0.5;
+            const scale2 = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left2 = (Math.random() * (limitWidth2*500/height)) - (scale2*512*padRatio2) + endX;
+            const top2 = (Math.random() * 250) - (scale2*512*padRatio2) + startY;
+            fetchSticker( sticker2, {left: left2, top: top2, scale: scale2});
+
+            const sticker = getRandomStickerLink();
+            const limitWidth = 0.1 * width;
+            const padRatio = 0.5;
+            const scale = (Math.random() * 0.2) + 0.3; //[0.3 - 0.5]
+            const left = (Math.random() * (limitWidth*500/height)) - (scale*512*padRatio) + endX;
+            const top = (Math.random() * 250) - (scale*512*padRatio) + startY + 250;
+            fetchSticker( sticker, {left, top, scale});
+        }
+    };
+
+    const getPositionTextBoxObject = (calInnerWidth, imageSize) => {
+        const {width, height} = imageSize;
+        if (face && face.BoundingBox) {
+            const endTop = face.BoundingBox.Top + face.BoundingBox.Height;
+            if (endTop <= 0.8) {
+                //btm
+                return {
+                    left: (calInnerWidth/2) - (Math.min(width*500/height, calInnerWidth)/2),
+                    width: Math.min(width*500/height, calInnerWidth),
+                    top: 445,
+                    fontSize: 50,
+                    fill: 'green',
+                    textAlign: "center",
+                };
+            }
+            return {
+                left: (calInnerWidth/2) - (Math.min(width*500/height, calInnerWidth)/2),
+                width: Math.min(width*500/height, calInnerWidth),
+                top: 5,
+                fontSize: 50,
+                fill: 'green',
+                textAlign: "center",
+            };
+        }
+        return {
+            left: (calInnerWidth/2) - (Math.min(width*500/height, calInnerWidth)/2),
+            width: Math.min(width*500/height, calInnerWidth),
+            top: 5,
+            fontSize: 50,
+            fill: 'green',
+            textAlign: "center",
+        };
+    };
+
+    const randomWord = () => {
+        if (face && face.Emotions) {
+            const sortedEmotion = face.Emotions.sort((a,b) => b.Confidence - a.Confidence);
+            if (sortedEmotion[0]) {
+                const obj = CAPTIONS.find((e) => e.type === sortedEmotion[0].Type);
+                const captionPool = obj.captions.concat(NEUTRAL_WORDS);
+                return captionPool[parseInt(Math.random() * captionPool.length)];
+            } 
+            
+        }
+        const arrayWord = ARRAYWORD.concat(NEUTRAL_WORDS);
+        return arrayWord[parseInt(Math.random() * arrayWord.length)];
+    };
+
     const surprise = () => {
+        setSpin(true);
         const calInnerWidth = 0.94*window.innerWidth;
-        // const numberFilter = Math.floor(Math.random() * 7) + 1
         fabricRef.current.clear();
         fabric.Image.fromURL(photo, (img) => {
             // set the size of the image
+            const startX = (calInnerWidth/2) - (img.width*500/img.height/2);
+            const startY = 0;
+            const endX = (calInnerWidth/2) + (img.width*500/img.height/2);
+            const endY = fabricRef.current.height;
             img.scaleToHeight(fabricRef.current.height);
-            img.set({left: (calInnerWidth/2) - (img.width*500/img.height/2)});
+            img.set({left: startX});
       
             // add the image to the fabricRef.current
             fabricRef.current.add(img);
             // create a new rectangle object to add on top of the image
+            addStickers(parseInt(Math.random() * 4) + 1, {startX, startY, endX, endY}, {width: img.width, height: img.height});
+
+            const caption = randomWord();
             const objects = [
-                new fabric.Rect({
-                    left: 100,
-                    top: 100,
-                    width: 50,
-                    height: 50,
-                    fill: 'red',
-                }),
-                new fabric.Circle({
-                    left: 300,
-                    top: 200,
-                    radius: 25,
-                    fill: 'blue',
-                }),
-                new fabric.Textbox('Hello, world!', {
-                    left: (calInnerWidth/2) - (Math.min(img.width*500/img.height, calInnerWidth)/2),
-                    width: Math.min(img.width*500/img.height, calInnerWidth),
-                    top: 5,
-                    fontSize: 50,
-                    fill: 'green',
-                    textAlign: "center",
-                    fontFamily: 'Menlo'
-                }),
+                new fabric.Textbox(caption, 
+                    caption === "Hello, world!" ? 
+                        {...getPositionTextBoxObject(calInnerWidth, {width: img.width, height: img.height}), fontFamily: "Menlo"} :
+                        getPositionTextBoxObject(calInnerWidth, {width: img.width, height: img.height})
+                ),
             ];
+
             fabricRef.current.add(...objects);
         });
-
+        fabricRef.current.renderAll();
+        setSpin(false);
     };
 
 
@@ -272,31 +478,7 @@ const MainPage = () => {
                                                     type="primary"
                                                     disabled={!previewSticker}
                                                     onClick={() => {
-                                                        fetch(previewSticker)
-                                                            .then(response => response.blob())
-                                                            .then(blob => {
-                                                                var reader = new FileReader();
-                                                                console.log(blob);
-                                                                reader.onloadend = function() {
-                                                                // Retrieve the Base64-encoded data URL of the image
-                                                                    var base64data = reader.result;
-                                                                    console.log(base64data);
-
-                                                                    // // Use the Base64-encoded data URL as needed (e.g. to create a Fabric.js Image object)
-                                                                    fabric.Image.fromURL(base64data, function(img) {
-                                                                        var oImg = img.set({ left: 0, top: 0}).scale(0.5);
-                                                                        fabricRef.current.add(oImg);
-                                                                    });
-                                                                };
-                                                                // Load the image data into the FileReader
-                                                                reader.readAsDataURL(blob);
-                                                            })
-                                                            .catch(error => {
-                                                            // Handle any errors that occur during the fetch operation
-                                                                console.error('Error fetching image:', error);
-                                                                messageApi.error("Cannot load sticker");
-                                                            });
-
+                                                        fetchSticker(previewSticker, {left: 0, top: 0, scale: 0.5});
                                                     }}
                                                 >Add sticker</Button>
                                             </Space>
