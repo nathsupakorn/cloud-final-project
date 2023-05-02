@@ -1,0 +1,40 @@
+item { 
+	name:'hello'
+	id:1
+}
+item { 
+	name:'no'
+	id:2
+}
+item { 
+	name:'iloveyou'
+	id:3
+}
+item { 
+	name:'yes'
+	id:4
+}
+item { 
+	name:'good'
+	id:5
+}
+item { 
+	name:'ok'
+	id:6
+}
+item { 
+	name:'two-finger'
+	id:7
+}
+item { 
+	name:'heart'
+	id:8
+}
+item { 
+	name:'phone'
+	id:9
+}
+item { 
+	name:'cool'
+	id:10
+}

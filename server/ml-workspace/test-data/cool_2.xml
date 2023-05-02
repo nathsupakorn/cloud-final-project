@@ -1,0 +1,26 @@
+<annotation>
+	<folder>test</folder>
+	<filename>cool_2.jpg</filename>
+	<path>/Volumes/project/cloud/final/RealTimeObjectDetection/Tensorflow/workspace/images/cool/test/cool_2.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1280</width>
+		<height>720</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>cool</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>578</xmin>
+			<ymin>387</ymin>
+			<xmax>779</xmax>
+			<ymax>587</ymax>
+		</bndbox>
+	</object>
+</annotation>
