@@ -57,7 +57,7 @@ pip install "uvicorn[standard]"
 This folder contains files for training the model. 
 In script folder, there is a file for generate tf-record which is a format for tensorflow to train the model.
 In train-data and test-data, there are files for train and test data. We already create XML annotations [bounding box].
-You can train model by running object-detection.ipynb.
+You can train model by running object_detection.ipynb.
 ```
 
 ## Part2: trained-model folder
