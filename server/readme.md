@@ -21,7 +21,7 @@ source ./env/bin/activate
 git clone https://github.com/tensorflow/models.git
 ```
 
-### Downlaod protobuf compiler
+### Download protobuf compiler
 #### Mac user
 ```
 brew install protobuf
