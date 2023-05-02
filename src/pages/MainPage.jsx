@@ -620,7 +620,7 @@ const MainPage = () => {
                     }}
                 >
                     <Space style={{width: "100%", justifyContent: "center", display: "flex"}}>
-                        <canvas id="bill" width={320} height={1300}></canvas>
+                        <canvas id="bill" width={320} height={1200}></canvas>
                     </Space>
                     <Space style={{width: "100%", justifyContent: "end", display: "flex"}}>
                         <Button type="primary" icon={<PrinterOutlined />} onClick={() => {
