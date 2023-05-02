@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Col, Row, Layout, Button, Space, Typography, message } from "antd";
+import { Spin, Col, Row, Layout, Button, Space, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
     CameraOutlined,
@@ -8,6 +8,7 @@ import {
 import { getFacePredict, getRefImage } from "../api/apiService";
 
 const { Content } = Layout;
+const { Title } = Typography;
 
 const GamePage = () => {
     const navigate = useNavigate();
@@ -21,15 +22,25 @@ const GamePage = () => {
     const [disabledButton, setDisabledButton] = useState(true);
     const [messageApi, contextHolder] = message.useMessage();
     const [refImage, setRefImage] = useState(undefined);
+    const [spin, setSpin] = useState(false);
 
     const getRefPhotoImage = async () => {
-        const response = await getRefImage();
-        console.log(response);
-        setRefImage(response);
+        try {
+            const response = await getRefImage();
+            setRefImage(response);
+            return  Promise.resolve(response);
+        } catch (error) {
+            messageApi.error("Do not ready now, please refresh page");
+            return Promise.reject("Do not ready")
+        }
     };
+
     useEffect(() => {
+        setSpin(true);
         getVideo();
-        getRefPhotoImage();
+        getRefPhotoImage().then(() => {
+            setSpin(false);
+        });
     }, [videoRef]);
 
     const getVideo = () => {
@@ -90,59 +101,72 @@ const GamePage = () => {
     };
 
     return (
-        <Content style={{padding: "5%"}}>
+        <Content style={{padding: "3%"}}>
             {contextHolder}
-            <div className="webcam-video">
-                <Row justify="center">
+            <Spin spinning={spin}>
+                <div className="webcam-video">
+                    <Row justify="center" gutter={[16,16]}>
+                        { refImage && 
                     <Col span={24}>
                         <Space direction="vertical">
-                            <video
-                                onCanPlay={() => paintToCanvas()}
-                                ref={videoRef}
-                                className="player"
-                                id="player"
-                                style={{minWidth: 300, width: "100%", maxWidth: 1000, borderRadius: '1em'}}
-                            />
-                            <Space wrap style={{width: "100%", display: "flex", justifyContent: "end"}}>
-                                {/* <Button onClick={() => takePhoto()}>Take a photo</Button> */}
-                                { !disabledButton && 
+                            <Title level={3}>Reference photo</Title>
+                            {refImage.data && <img src={'data:image/jpeg;base64,' + refImage.data} style={{width: 500, height: "auto", borderRadius: "1rem"}}></img>}
+                        </Space>
+                    </Col>
+                        }
+                        <Col span={24}>
+                            <Space direction="vertical">
+                                <Title level={3}>Your photo</Title>
+                                <video
+                                    onCanPlay={() => paintToCanvas()}
+                                    ref={videoRef}
+                                    className="player"
+                                    id="player"
+                                    style={{minWidth: 300, width: "100%", maxWidth: 1000, borderRadius: '1em'}}
+                                />
+                                <Space wrap style={{width: "100%", display: "flex", justifyContent: "end"}}>
+                                    {/* <Button onClick={() => takePhoto()}>Take a photo</Button> */}
+                                    { !disabledButton && 
                                 <Typography.Title style={{padding: 0, margin: 0, backgroundColor: "#00b372", color: "white",width: 50, height: 50, borderRadius: 50}}>{countDown}</Typography.Title>
-                                }
-                                {disabledButton && <Button
-                                    type="primary"
-                                    icon={<CameraFilled />}
-                                    disabled={!disabledButton}
-                                    onClick={() => {
-                                        setDisabledButton(false);
-                                        let myAudio = new Audio( require("../audios/mixkit-simple-game-countdown-921.wav"));
-                                        myAudio.play();
-                                        setInterval(() => {
-                                            setCountDown(countDown => countDown - 1);
-                                        }, 1000);
-                                        return setTimeout(async () => {
-                                            try {
-                                                const photobase64 = photoRef.current.toDataURL("image/jpeg");
-                                                navigate("/main", { state : {
-                                                    photo: photobase64,
-                                                }});
-                                            } catch (error) {
-                                                messageApi.error(error.message);
-                                            }
-                                        }, 3100);
-                                    }}>Shoot</Button>}
+                                    }
+                                    {disabledButton && <Button
+                                        type="primary"
+                                        icon={<CameraFilled />}
+                                        disabled={!disabledButton}
+                                        onClick={() => {
+                                            setDisabledButton(false);
+                                            let myAudio = new Audio( require("../audios/mixkit-simple-game-countdown-921.wav"));
+                                            myAudio.play();
+                                            setInterval(() => {
+                                                setCountDown(countDown => countDown - 1);
+                                            }, 1000);
+                                            return setTimeout(async () => {
+                                                try {
+                                                    const photobase64 = photoRef.current.toDataURL("image/jpeg");
+                                                    navigate("/main", { state : {
+                                                        photo: photobase64,
+                                                        emotion: refImage.emotion,
+                                                        posture: refImage.posture 
+                                                    }});
+                                                } catch (error) {
+                                                    messageApi.error(error.message);
+                                                }
+                                            }, 3100);
+                                        }}>Shoot</Button>}
+                                </Space>
                             </Space>
-                        </Space>
-                    </Col>
-                    <Col span={24}>
-                        <Space>
-                            <canvas ref={photoRef} className="photo" style={{opacity: 0}}/>
-                            <div className="photo-booth">
-                                <div ref={stripRef} className="strip" />
-                            </div>
-                        </Space>
-                    </Col>
-                </Row>
-            </div>
+                        </Col>
+                        <Col span={24}>
+                            <Space>
+                                <canvas ref={photoRef} className="photo" style={{opacity: 0}}/>
+                                <div className="photo-booth">
+                                    <div ref={stripRef} className="strip" />
+                                </div>
+                            </Space>
+                        </Col>
+                    </Row>
+                </div>
+            </Spin>
         </Content>
     );
 };
