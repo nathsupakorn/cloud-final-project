@@ -382,7 +382,7 @@ const MainPage = () => {
             context.rotate(-myRotate);
             context.translate(150, 150);
         };
-        
+
         return Promise.resolve("OK");
     };
 
@@ -620,7 +620,7 @@ const MainPage = () => {
                     }}
                 >
                     <Space style={{width: "100%", justifyContent: "center", display: "flex"}}>
-                        <canvas id="bill" width={320} height={1000}></canvas>
+                        <canvas id="bill" width={320} height={1300}></canvas>
                     </Space>
                     <Space style={{width: "100%", justifyContent: "end", display: "flex"}}>
                         <Button type="primary" icon={<PrinterOutlined />} onClick={() => {
