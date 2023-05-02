@@ -44,7 +44,7 @@ export const getPredictScore = async (base64String) => {
     });
     try {
         const response = await axios.post(
-            "http://3.129.114.108:8000/predict",
+            "https://ycptca22jf.execute-api.us-east-2.amazonaws.com/default/predict-posture",
             payload,
             {
                 headers: {

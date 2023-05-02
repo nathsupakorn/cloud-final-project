@@ -109,7 +109,6 @@ const MainPage = () => {
     };
 
     const setUpScore = (caption, score) => {
-        console.log(caption , score);
         setPhotoType(caption);
         if (caption === "ALL") {
             setScore(score);
@@ -121,7 +120,6 @@ const MainPage = () => {
     };
 
     const calculateScore = (obj, emo, post) => {
-        console.log(obj, emo, post);
         let sorterEmotions = [];
         if (obj.face.Emotions.reduce((accu, curr) => accu + curr.Confidence, 0) >= 0) {
             sorterEmotions = obj.face.Emotions.sort((a, b) => a.Confidence - b.Confidence);
@@ -131,11 +129,8 @@ const MainPage = () => {
             arrayPrediction.push({description: key, value: val});
         }
         const sorterPrediction = arrayPrediction.sort((a,b) => a.value - b.value);
-        console.log(sorterEmotions);
-        console.log(sorterPrediction);
         if (sorterEmotions.length > 0 && sorterPrediction.length > 0) {
             const scoreEmot = (sorterEmotions.findIndex((val) => val.Type === emo) + 1)/sorterEmotions.length;
-            console.log(scoreEmot);
             const scorePred = (sorterPrediction.findIndex((val) => val.description === post) + 1)/sorterPrediction.length;
             const totalScore = parseInt(Math.floor((scoreEmot*80) + (scorePred*20) + 0.5));
             return {caption: "ALL", score: (totalScore > 100 ? 100 : totalScore)};
@@ -194,9 +189,7 @@ const MainPage = () => {
             const post = location.state.posture;
             if (img && emo && post) {
                 setEmotion(emo);
-                console.log("emo", emo);
                 setPosture(post);
-                console.log("post", post);
                 setPhoto(img);
                 fetchAllData(img).then((myScore) => {
                     const {caption, score} = calculateScore(myScore, emo, post);
@@ -228,7 +221,6 @@ const MainPage = () => {
             })
             .catch(error => {
                 // Handle any errors that occur during the fetch operation
-                console.error('Error fetching image:', error);
                 messageApi.error("Cannot load sticker");
             });
     };
@@ -372,7 +364,6 @@ const MainPage = () => {
         let transparantLogo = new Image();
         transparantLogo.src = TransparentLogo;
         const myRotate = ((Math.random()*0.4)-0.2).toFixed(2);
-        console.log(myRotate);
         transparantLogo.onload = () => {
             context.translate(-150, -150);
             context.rotate(myRotate);
