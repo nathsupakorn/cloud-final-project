@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train</folder>
+	<filename>two-finger_17.jpg</filename>
+	<path>/Volumes/project/cloud/final/RealTimeObjectDetection/Tensorflow/workspace/images/two-finger/train/two-finger_17.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1280</width>
+		<height>720</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>two-finger</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>874</xmin>
+			<ymin>278</ymin>
+			<xmax>1011</xmax>
+			<ymax>599</ymax>
+		</bndbox>
+	</object>
+</annotation>

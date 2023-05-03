@@ -1,0 +1,26 @@
+<annotation>
+	<folder>test</folder>
+	<filename>good_0.jpg</filename>
+	<path>/Volumes/project/cloud/final/RealTimeObjectDetection/Tensorflow/workspace/images/good/test/good_0.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1280</width>
+		<height>720</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>good</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>375</xmin>
+			<ymin>340</ymin>
+			<xmax>555</xmax>
+			<ymax>619</ymax>
+		</bndbox>
+	</object>
+</annotation>
