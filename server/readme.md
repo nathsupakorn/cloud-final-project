@@ -56,7 +56,7 @@ pip install "uvicorn[standard]"
 ```text
 This folder contains files for training the model. 
 In script folder, there is a file for generate tf-record which is a format for tensorflow to train the model.
-In train-data and test-data, there are files for train and test data. We already create XML annotations [bounding box].
+In train-data and test-data, there are files for train and test data. We already have created XML annotations [bounding box].
 You can train model by running object_detection.ipynb.
 ```
 
@@ -67,7 +67,7 @@ This folder contains trained model. You can load this model to server.
 
 ## Part3: aws-lambda-code
 ```text
-This folder contain three files which is no-vpc-setup.py and final-project-vpc.py.
+This folder contains three files which is no-vpc-setup.py, final-project-vpc.py and final-project-vpc.zip.
 First, no-vpc-setup.py is a file for lambda function which does not set up vpc.
 Second, final-project-vpc.py is a file for lambda function which set up the vpc. 
 Third final-project-vpc.zip, we already have installed additional library. You can upload this zip to lambda workspace.

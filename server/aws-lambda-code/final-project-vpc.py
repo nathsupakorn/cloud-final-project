@@ -3,7 +3,7 @@ import base64
 import requests
 
 # private ip for web server deploying the trained model
-base_url = "http://10.0.0.43:8000/"
+base_url = "http://x.x.x.x:xxxx/"
 def predict_posture(image):
     body = {"image":  base64.b64encode(image).decode('utf-8')}
     res = requests.post(f"{base_url}predict", json=body)
