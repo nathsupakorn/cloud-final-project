@@ -25,6 +25,7 @@ app.add_middleware(CORSMiddleware,
     allow_methods=["*"],
     allow_headers=["*"]
     )
+
 CHECKPOINT_PATH="./trained-model/model"
 CONFIG_PATH="./trained-model/pipeline.config"
 

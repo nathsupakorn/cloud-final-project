@@ -15,7 +15,7 @@ def get_random_image():
     emotion = emotions[emotion_index]
 
     try:
-        bucket_name = "random-images6231322621"
+        bucket_name = ""
         filename = f'{posture}/{posture}_{emotion}.jpg'
         res = s3.get_object(Bucket=bucket_name, Key=filename)
         image = res["Body"].read()
