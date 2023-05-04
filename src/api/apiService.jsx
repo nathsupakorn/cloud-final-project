@@ -1,6 +1,7 @@
 import axios from 'axios';
+import API_BASE_URL from './config';
 
-axios.defaults.baseURL = "https://ycptca22jf.execute-api.us-east-2.amazonaws.com/default";
+axios.defaults.baseURL = API_BASE_URL;
 
 export const getFacePredict = async (base64String) => {
     const payload = JSON.stringify({
@@ -8,7 +9,7 @@ export const getFacePredict = async (base64String) => {
     });
     try {
         const response = await axios.post(
-            'https://ycptca22jf.execute-api.us-east-2.amazonaws.com/default/predict-emotion', 
+            `${API_BASE_URL}/predict-emotion`, 
             payload,
             {
                 headers: {
@@ -25,7 +26,7 @@ export const getFacePredict = async (base64String) => {
 export const getRefImage = async () => {
     try {
         const response = await axios.get(
-            "https://ycptca22jf.execute-api.us-east-2.amazonaws.com/default/getImage",
+            `${API_BASE_URL}/getImage`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ export const getPredictScore = async (base64String) => {
     });
     try {
         const response = await axios.post(
-            "https://ycptca22jf.execute-api.us-east-2.amazonaws.com/default/predict-posture",
+            `${API_BASE_URL}/predict-posture`,
             payload,
             {
                 headers: {
